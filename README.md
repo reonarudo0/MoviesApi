@@ -1,4 +1,4 @@
 # MoviesApi
-MoviesApi(IN DEVELOPMENT) made with NojeJs
+MoviesApi(IN DEVELOPMENT) made with NojeJs and MongoDB.
 
-This project has the purpose to learn and practice programming.
+This project has the purpose for me to learn and practice programming.
