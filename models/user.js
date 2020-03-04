@@ -1,5 +1,6 @@
 const mongoose =  require('mongoose');
 const jwt = require('jsonwebtoken');
+const _ = require('lodash');
 const config = require('config')
 const Joi =  require('Joi');
 
@@ -10,8 +11,11 @@ userSchema =  new mongoose.Schema({
     role: {type:String,default:'Customer',enum:['Customer','Employee','Admin']},
 });
 
-userSchema.methods.generateAuthenticationToken = ()=>{
-    return jwt.sign({_id: this._id,role: this.role},config.get('jwtPrivateKey'));
+userSchema.methods.generateAuthenticationToken = function(){
+    const token = jwt.sign(_.pick(this,['name','role']), config.get('jwtPrivateKey'));
+    console.log(this.name);
+    console.log(token);
+    return token;
 }
 
 User = mongoose.model('User',userSchema);
@@ -19,10 +23,10 @@ User = mongoose.model('User',userSchema);
 function ValidateUser(user)
 {
     const schema = {
-        name: Joi.String().required().min(5).max(50),
-        email: Joi.email().required().min(5).max(50),
-        password: Joi.String().required().min(5).max(1024),
-        role: Joi.String()
+        name: Joi.string().required().min(5).max(50),
+        email: Joi.string().email().required().min(5).max(50),
+        password: Joi.string().required().min(5).max(1024),
+        role: Joi.string()
     };
     return Joi.validate(user,schema);
 }

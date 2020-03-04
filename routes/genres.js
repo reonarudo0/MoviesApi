@@ -32,12 +32,12 @@ router.put('/:id',async(req,res)=>{
     genre.name = req.body.name;
     genre = await genre.save();
     res.send(genre);
-})
+});
 
 router.delete('/:id',async(req,res)=>{
     let genre = await Genre.findByIdAndRemove(req.params.id);
     if(!genre)  return res.status(404).send('Genre not found.');
     res.send(genre);
-})
+});
 
 module.exports = router;
