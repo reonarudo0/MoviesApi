@@ -1,15 +1,17 @@
 const {Movie,validate} = require('../models/movie');
 const {Genre} = require('../models/genre');
+const userAuthorization = require('../middleware/userAuthorization');
+const roleAuthorization = require('../middleware/roleAuthorization');
 const logger = require('../config/logger');
 const _ = require('lodash');
 const express =  require('express');
 const router = express.Router();
 
-router.get('/', async(req,res)=>{
+router.get('/', userAuthorization,async(req,res)=>{
     res.send(await Movie.find().sort({name:1}).select({name:1,genre:1,rentalValue:1,sellValue:1,numberInStock:1}));
 });
 
-router.post('/', async(req,res)=>{
+router.post('/',[userAuthorization,roleAuthorization(['Employee','Admin'])],async(req,res)=>{
     const {error} = validate(req.body);
     if(error) return res.status(400).send(error.message);    
     
@@ -27,7 +29,7 @@ router.post('/', async(req,res)=>{
     res.send(movie);
 });
 
-router.put('/:id', async(req,res)=>{
+router.put('/:id',[userAuthorization,roleAuthorization(['Employee','Admin'])], async(req,res)=>{
     const {error} = validate(req.body);
     if(error) return res.status(400).send(error.message);
 
@@ -50,7 +52,7 @@ router.put('/:id', async(req,res)=>{
     res.send(movie);
 });
 
-router.delete('/:id',async(req,res)=>{
+router.delete('/:id',[userAuthorization,roleAuthorization(['Admin'])],async(req,res)=>{
     const movie = Movie.findByIdAndRemove(req.params.id);
     if(!movie) return res.status(404).send('Genre not found.');
     res.send(movie);
